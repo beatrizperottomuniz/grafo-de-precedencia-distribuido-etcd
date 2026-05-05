@@ -7,12 +7,8 @@ def main():
 
     print("Aguardando")
 
-    # Bloqueia sem espera ocupada até a chave ready/C aparecer
-    events, cancel = client.watch('ready/C')
-    for event in events:
-        if isinstance(event, etcd3.events.PutEvent):
-            cancel()
-            break
+    # watch_once bloqueia até receber exatamente um evento na chave
+    client.watch_once('ready/C')
 
     limite = random.randint(10, 20)
 
@@ -20,8 +16,9 @@ def main():
         print(i)
         time.sleep(1)
 
+    lease = client.lease(60)
     print("Liberando D")
-    client.put('done/C', '1')
+    client.put('done/C', '1', lease=lease)
     print("Fim")
 
 if __name__ == '__main__':

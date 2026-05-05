@@ -3,27 +3,21 @@ import time
 import random
 
 def esperar_chave(client, chave):
-    """Aguarda uma chave aparecer no etcd sem espera ocupada.
-    Se a chave já existir quando chegarmos aqui, retorna imediatamente."""
+    """Aguarda uma chave aparecer no etcd.
+    Se já existir quando D iniciar, retorna imediatamente sem watch."""
     valor, _ = client.get(chave)
     if valor is not None:
-        return  # já está pronta
+        return
 
-    events, cancel = client.watch(chave)
-    for event in events:
-        if isinstance(event, etcd3.events.PutEvent):
-            cancel()
-            break
+    # watch_once bloqueia até receber exatamente um evento na chave
+    client.watch_once(chave)
 
 def main():
     client = etcd3.client(host='localhost', port=2379)
 
     print("Aguardando")
 
-    # Aguarda B terminar (sem espera ocupada)
     esperar_chave(client, 'done/B')
-
-    # Aguarda C terminar (sem espera ocupada)
     esperar_chave(client, 'done/C')
 
     limite = random.randint(10, 20)
