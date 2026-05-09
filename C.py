@@ -20,6 +20,6 @@ for i in range(1, limite + 1):
     time.sleep(1)
 
 lease = client.lease(60)
-print("Libera D")
+print("Liberando D")
 client.put('done/C', '1', lease=lease)
 print("Fim")
