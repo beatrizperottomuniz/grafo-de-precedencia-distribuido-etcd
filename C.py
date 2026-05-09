@@ -3,26 +3,23 @@ import etcd3
 import time
 import random
 
-def main():
-    client = etcd3.client(host='localhost', port=2379)
 
-    print("Aguardando")
+client = etcd3.client(host='localhost', port=2379)
 
-    # watch_once bloqueia até receber exatamente um evento na chave
-    valor, _ = client.get('ready/C')
-    if valor is None:
-        client.watch_once('ready/C')
+print("Aguardando")
 
-    limite = random.randint(10, 20)
+# watch_once bloqueia ate receber exatamente um evento na chave
+valor, _ = client.get('ready/C')
+if valor is None:
+    client.watch_once('ready/C')
 
-    for i in range(1, limite + 1):
-        print(i)
-        time.sleep(1)
+limite = random.randint(10, 20)
 
-    lease = client.lease(60)
-    print("Liberando D")
-    client.put('done/C', '1', lease=lease)
-    print("Fim")
+for i in range(1, limite + 1):
+    print(i)
+    time.sleep(1)
 
-if __name__ == '__main__':
-    main()
+lease = client.lease(60)
+print("Libera D")
+client.put('done/C', '1', lease=lease)
+print("Fim")
