@@ -6,7 +6,7 @@ import random
 
 client = etcd3.client(host='localhost', port=2379)
 
-# lease 60 s = as chaves expiram automaticamente
+# lease 60 s = as chaves expiram automaticamente (se crash em D antes dele deletar chaves)
 lease = client.lease(60)
 
 limite = random.randint(10, 20)
